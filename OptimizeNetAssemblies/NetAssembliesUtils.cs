@@ -35,12 +35,19 @@ namespace OptimizeNetAssemblies
 
         private void CompileNetAssembly(String ngenFullPath)
         {
-            Process p = new Process();
-            p.StartInfo.FileName = ngenFullPath;
-            p.StartInfo.Arguments = "executequeueditems";
-            p.Start();
-            p.WaitForExit();
-            p.Dispose();
+            if (File.Exists(ngenFullPath))
+            {
+                Process p = new Process();
+                p.StartInfo.FileName = ngenFullPath;
+                p.StartInfo.Arguments = "executequeueditems";
+                p.Start();
+                p.WaitForExit();
+                p.Dispose();
+            }
+            else
+            {
+                Console.WriteLine(ngenFullPath + "Not Found!");
+            }
         }
 
         public void CompileAll()
