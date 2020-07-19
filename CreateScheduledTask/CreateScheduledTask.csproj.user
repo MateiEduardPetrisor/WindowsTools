@@ -1,6 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <StartArguments>"TestTask2" "C:\Update\OptimizeNetAssemblies.cdm"</StartArguments>
+    <StartArguments>"TEST TASK" "C:\Update\02.Optimize.After.Update.bat"</StartArguments>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <StartArguments>"TEST TASK" "C:\Update\02.Optimize.After.Update.bat"</StartArguments>
   </PropertyGroup>
 </Project>

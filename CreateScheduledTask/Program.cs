@@ -15,7 +15,7 @@ namespace CreateScheduledTask
                 {
                     if (FileInfoObj.Extension.Equals(".exe") || FileInfoObj.Extension.Equals(".cmd") || FileInfoObj.Extension.Equals(".bat"))
                     {
-                        ScheduledTaskUtilsObj.CreateScheduledTask(args[0].ToLower(), args[1]);
+                        ScheduledTaskUtilsObj.CreateScheduledTask(args[0], args[1]);
                     }
                     else
                     {
