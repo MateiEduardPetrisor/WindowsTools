@@ -77,15 +77,18 @@ namespace DisableAllNetworkAdapters
 
         public void DisableAll()
         {
-            foreach (String AdapterName in this.NetworkAdapters)
+            if (this.NetworkAdapters != null)
             {
-                Console.WriteLine(AdapterName + " is now Disabled!");
-                Process p = new Process();
-                p.StartInfo.FileName = this.NetshFullPath;
-                p.StartInfo.Arguments = "interface set interface \"" + AdapterName + "\" " + "disable";
-                p.Start();
-                p.WaitForExit();
-                p.Dispose();
+                foreach (String AdapterName in this.NetworkAdapters)
+                {
+                    Console.WriteLine(AdapterName + " is now Disabled!");
+                    Process p = new Process();
+                    p.StartInfo.FileName = this.NetshFullPath;
+                    p.StartInfo.Arguments = "interface set interface \"" + AdapterName + "\" " + "disable";
+                    p.Start();
+                    p.WaitForExit();
+                    p.Dispose();
+                }
             }
         }
     }

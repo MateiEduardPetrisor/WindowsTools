@@ -78,15 +78,18 @@ namespace EnableAllNetworkAdapters
 
         public void EnableAll()
         {
-            foreach (String AdapterName in this.NetworkAdapters)
+            if (this.NetworkAdapters != null)
             {
-                Console.WriteLine(AdapterName + " is now Enabled!");
-                Process p = new Process();
-                p.StartInfo.FileName = this.NetshFullPath;
-                p.StartInfo.Arguments = "interface set interface \"" + AdapterName + "\" " + "enable";
-                p.Start();
-                p.WaitForExit();
-                p.Dispose();
+                foreach (String AdapterName in this.NetworkAdapters)
+                {
+                    Console.WriteLine(AdapterName + " is now Enabled!");
+                    Process p = new Process();
+                    p.StartInfo.FileName = this.NetshFullPath;
+                    p.StartInfo.Arguments = "interface set interface \"" + AdapterName + "\" " + "enable";
+                    p.Start();
+                    p.WaitForExit();
+                    p.Dispose();
+                }
             }
         }
     }
