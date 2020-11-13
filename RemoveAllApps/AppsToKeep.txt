@@ -1,0 +1,8 @@
+﻿*store*
+*edge*
+*.NET.*
+*.VCLibs.*
+*.UI.*
+*WindowsCalculator*
+*ScreenSketch*
+*SunriseBaseGame*
