@@ -75,6 +75,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnableAllNetworkAdapters", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckArchType", "CheckArchType\CheckArchType.csproj", "{F2142369-10BC-425A-92F4-6A28A0D6F322}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CheckWindowsVersion", "CheckWindowsVersion\CheckWindowsVersion.csproj", "{AD76B846-A908-442F-A0A9-F37029963DBB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -225,6 +227,10 @@ Global
 		{F2142369-10BC-425A-92F4-6A28A0D6F322}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F2142369-10BC-425A-92F4-6A28A0D6F322}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F2142369-10BC-425A-92F4-6A28A0D6F322}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD76B846-A908-442F-A0A9-F37029963DBB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD76B846-A908-442F-A0A9-F37029963DBB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD76B846-A908-442F-A0A9-F37029963DBB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD76B846-A908-442F-A0A9-F37029963DBB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
