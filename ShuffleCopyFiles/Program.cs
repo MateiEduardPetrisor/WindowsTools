@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 
 namespace ShuffleCopyFiles
 {
@@ -6,31 +6,27 @@ namespace ShuffleCopyFiles
     {
         static void Main(String[] args)
         {
+            Int32 FilesPerFolder = 256;
             FilesShuffler FileShufflerObj;
             if (args.Length == 3)
             {
-                FileShufflerObj = new FilesShuffler(args[0], args[1]);
-                if (args[2].ToLower().Equals("ovr"))
+                if (Int32.TryParse(args[2], out Int32 temp))
                 {
-                    FileShufflerObj.CopyFiles(true);
+                    FilesPerFolder = temp;
+                    FileShufflerObj = new FilesShuffler(args[0], args[1], FilesPerFolder);
+                    FileShufflerObj.CopyFiles();
                 }
                 else
                 {
-                    Console.WriteLine("Usage");
-                    Console.WriteLine("FilesShuffler.exe " + "\"" + "SourceFolder" + "\"" + " " + "\"" + "DestinationFolder " + "ovr");
-                    Console.WriteLine("FilesShuffler.exe " + "\"" + "SourceFolder" + "\"" + " " + "\"" + "DestinationFolder");
+                    FileShufflerObj = new FilesShuffler(args[0], args[1], FilesPerFolder);
+                    FileShufflerObj.CopyFiles();
                 }
-            }
-            else if (args.Length == 2)
-            {
-                FileShufflerObj = new FilesShuffler(args[0], args[1]);
-                FileShufflerObj.CopyFiles(false);
             }
             else
             {
                 Console.WriteLine("Usage");
-                Console.WriteLine("FilesShuffler.exe " + "\"" + "SourceFolder" + "\"" + " " + "\"" + "DestinationFolder " + "ovr");
-                Console.WriteLine("FilesShuffler.exe " + "\"" + "SourceFolder" + "\"" + " " + "\"" + "DestinationFolder");
+                Console.WriteLine("FilesShuffler.exe " + "\"" + "SourceFolder" + "\"" + " " + "\"" + "DestinationFolder " + "\"" + "128" + "\"");
+                Console.WriteLine("FilesShuffler.exe " + "\"" + "SourceFolder" + "\"" + " " + "\"" + "DestinationFolder will use 256 files per folder");
             }
             Console.ReadKey();
         }
