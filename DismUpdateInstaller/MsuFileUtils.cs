@@ -50,7 +50,7 @@ namespace DismUpdateInstaller
             FileInfo fileInfo = new FileInfo(CabFileFullPath);
             if (fileInfo.Exists)
             {
-                Console.WriteLine("Installing cab file {0}", fileInfo.FullName);
+                Console.WriteLine("Installing package file {0}", fileInfo.FullName);
                 Process p = new Process();
                 p.StartInfo.FileName = this.DismFullPath;
                 p.StartInfo.Arguments = "/Online /Add-Package /PackagePath:" + "\"" + fileInfo.FullName + "\"" + " /NoRestart";
@@ -66,16 +66,34 @@ namespace DismUpdateInstaller
             if (!FileInfoObj.Exists && FileInfoObj.Attributes.HasFlag(FileAttributes.Directory))
             {
                 String[] FileList = Directory.GetFiles(WorkingDirectoryFullPath, "*.msu", SearchOption.TopDirectoryOnly);
-                foreach (String fname in FileList)
+                Process p = new Process();
+                p.StartInfo.FileName = "CheckWindowsVersion.exe";
+                p.Start();
+                p.WaitForExit();
+                if (p.ExitCode == 11)
                 {
-                    this.ExtractMsuFile(fname);
-                }
-                FileList = Directory.GetFiles(WorkingDirectoryFullPath, "*.cab", SearchOption.TopDirectoryOnly);
-                foreach (String CabFilePath in FileList)
-                {
-                    if (!CabFilePath.ToLower().Contains("wsusscan.cab") && CabFilePath.ToLower().Contains("windows"))
+                    Console.WriteLine("Widows 11 detected calling dism directly with msu package");
+                    foreach (String fname in FileList)
                     {
-                        this.InstallSingleUpdate(CabFilePath);
+                        Console.WriteLine("Calling dism with msu file {0}", fname);
+                        this.InstallSingleUpdate(fname);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("Windows 10 or older detected need to extract the msu package first");
+                    foreach (String fname in FileList)
+                    {
+                        this.ExtractMsuFile(fname);
+                        FileList = Directory.GetFiles(WorkingDirectoryFullPath, "*.cab", SearchOption.TopDirectoryOnly);
+                        foreach (String CabFilePath in FileList)
+                        {
+                            if (!CabFilePath.ToLower().Contains("wsusscan.cab"))
+                            {
+                                Console.WriteLine("Calling dism with cab file {0}", CabFilePath);
+                                this.InstallSingleUpdate(CabFilePath);
+                            }
+                        }
                     }
                 }
             }
