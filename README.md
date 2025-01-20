@@ -1,4 +1,4 @@
-# WindowsTools - Collection of different mini executables that wrap some batch commands
+## WindowsTools - Collection of different mini executables that wrap some batch commands
 
 # AddToPath - Tool to add a path to System %PATH% Environment Variable.
 # CheckArchType - Tool that wrap 7z.exe to find if a binary is for x64 or x86 CPU architecture.
