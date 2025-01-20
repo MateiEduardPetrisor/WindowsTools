@@ -41,6 +41,7 @@ namespace OptimizeNetAssemblies
                 p.StartInfo.FileName = ngenFullPath;
                 p.StartInfo.Arguments = "executequeueditems";
                 p.Start();
+                p.PriorityClass = ProcessPriorityClass.High;
                 p.WaitForExit();
                 p.Dispose();
             }
