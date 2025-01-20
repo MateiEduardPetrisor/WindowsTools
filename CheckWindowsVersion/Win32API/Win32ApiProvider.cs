@@ -15,20 +15,20 @@ namespace CheckWindowsVersion
 
         [SecurityCritical]
         [DllImport(NTDLL, EntryPoint = "RtlGetVersion", SetLastError = true, CharSet = CharSet.Unicode)]
-        internal static extern NTSTATUS Ntdll_RtlGetVersion(ref OSVERSIONINFOEX versionInfo);
+        internal static extern NTSTATUS ntdll_RtlGetVersion(ref OSVERSIONINFOEX versionInfo);
 
         [DllImport(USER32, EntryPoint = "GetSystemMetrics")]
-        internal static extern int Ntdll_GetSystemMetrics(SystemMetric smIndex);
+        internal static extern int ntdll_GetSystemMetrics(SystemMetric smIndex);
 
 
         public NTSTATUS RtlGetVersion(ref OSVERSIONINFOEX versionInfo)
         {
-            return Ntdll_RtlGetVersion(ref versionInfo);
+            return ntdll_RtlGetVersion(ref versionInfo);
         }
 
         public int GetSystemMetrics(SystemMetric smIndex)
         {
-            return Ntdll_GetSystemMetrics(smIndex);
+            return ntdll_GetSystemMetrics(smIndex);
         }
     }
 }

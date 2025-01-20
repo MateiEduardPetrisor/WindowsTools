@@ -5,7 +5,7 @@ using System.Security;
 namespace CheckWindowsVersion
 {
     /// <summary>
-    /// Detects Windows version.
+    /// Detects Windows version starting with Windows 2000 and also works on Windows 11/ Windows 10/Server 2022/Server 2019/Server 2016 right away.
     /// </summary>
     /// <remarks>
     /// References:
@@ -16,19 +16,29 @@ namespace CheckWindowsVersion
     [SecurityCritical]
     public static class OSVersion
     {
-        // default providers when class is instantiated or setted to default values
+        /// <summary>
+        /// Default provider for the Win32 API.
+        /// </summary>
         private static readonly IWin32API _win32ApiProviderDefault;
+
+        /// <summary>
+        /// Default provider for the Windows environment.
+        /// </summary>
         private static readonly IEnvironment _environmentProviderDefault;
 
-        private static ProductType _productType;
-        private static SuiteMask _suiteMask;
-
+        /// <summary>
+        /// Provider for working with the Win32 API.
+        /// </summary>
         private static IWin32API _win32ApiProvider;
+
+        /// <summary>
+        /// Provider for getting information about the Windows environment.
+        /// </summary>
         private static IEnvironment _environmentProvider;
 
-        public static int MajorVersion { get; private set; }
-        public static int MinorVersion { get; private set; }
-        public static int BuildNumber { get; private set; }
+        public static int MajorVersion { get => DetectWindowsVersion(_win32ApiProvider).MajorVersion; }
+        public static int MinorVersion { get => DetectWindowsVersion(_win32ApiProvider).MinorVersion; }
+        public static int BuildNumber { get => DetectWindowsVersion(_win32ApiProvider).BuildNumber; }
         public static bool IsWorkstation { get => GetIfWorkStation(); }
         public static bool IsServer { get => GetIfServer(); }
         public static bool Is64BitOperatingSystem { get => GetIf64BitOperatingSystem(); }
@@ -41,14 +51,13 @@ namespace CheckWindowsVersion
 
             _win32ApiProvider = _win32ApiProviderDefault;
             _environmentProvider = _environmentProviderDefault;
-            Initialize();
         }
 
         /// <summary>
-        /// Detects Windows version starting with Windows 2000 and also works on Windows 10/Server 2019/Server 2016 right away.
+        /// Gets the version information and build number.
         /// </summary>
-        /// <remarks>Calls the Windows Kernel function RtlGetVersion routine. </remarks>
-        /// <returns></returns>        
+        /// <remarks></remarks>
+        /// <returns>Returns <see cref="VersionInfo"/>, e.g 10.0.19043</returns>        
         public static VersionInfo GetOSVersion()
         {
             return new VersionInfo(MajorVersion, MinorVersion, BuildNumber);
@@ -61,10 +70,18 @@ namespace CheckWindowsVersion
         /// <remarks>detection based on https://docs.microsoft.com/de-de/windows-hardware/drivers/ddi/wdm/ns-wdm-_osversioninfoexw#remarks </remarks>
         public static OperatingSystem GetOperatingSystem()
         {
-            if (MajorVersion == 10 && MinorVersion == 0 && IsWorkstation)
+            SuiteMask suiteMask = DetectWindowsVersion(_win32ApiProvider).SuiteMask;
+
+            if (MajorVersion == 10 && MinorVersion == 0 && BuildNumber >= 22000 && IsWorkstation)
+                return OperatingSystem.Windows11;
+            else if (MajorVersion == 10 && MinorVersion == 0 && BuildNumber >= 20348 && IsServer)
+                return OperatingSystem.WindowsServer2022;
+            else if (MajorVersion == 10 && MinorVersion == 0 && IsWorkstation)
                 return OperatingSystem.Windows10;
+            else if (MajorVersion == 10 && MinorVersion == 0 && BuildNumber >= 17763 && IsServer)
+                return OperatingSystem.WindowsServer2019;
             else if (MajorVersion == 10 && MinorVersion == 0 && IsServer)
-                return OperatingSystem.WindowsServer20162019;
+                return OperatingSystem.WindowsServer2016;
             else if (MajorVersion == 6 && MinorVersion == 3 && IsServer)
                 return OperatingSystem.WindowsServer2012R2;
             else if (MajorVersion == 6 && MinorVersion == 3 && IsWorkstation)
@@ -90,10 +107,10 @@ namespace CheckWindowsVersion
                      MinorVersion == 2 &&
                      IsServer &&
                      ReadSystemMetrics(SystemMetric.SM_SERVERR2) == 0 &&
-                     (_suiteMask & SuiteMask.VER_SUITE_WH_SERVER) != SuiteMask.VER_SUITE_WH_SERVER
+                     (suiteMask & SuiteMask.VER_SUITE_WH_SERVER) != SuiteMask.VER_SUITE_WH_SERVER
                      )
                 return OperatingSystem.WindowsServer2003;
-            else if (MajorVersion == 5 && MinorVersion == 2 && (_suiteMask & SuiteMask.VER_SUITE_WH_SERVER) == SuiteMask.VER_SUITE_WH_SERVER)
+            else if (MajorVersion == 5 && MinorVersion == 2 && (suiteMask & SuiteMask.VER_SUITE_WH_SERVER) == SuiteMask.VER_SUITE_WH_SERVER)
                 return OperatingSystem.WindowsHomeServer;
             else if (MajorVersion == 5 && MinorVersion == 2 && IsWorkstation && Is64BitOperatingSystem)
                 return OperatingSystem.WindowsXPProx64;
@@ -115,7 +132,6 @@ namespace CheckWindowsVersion
             _ = win32ApiProvider ?? throw new ArgumentNullException();
 
             _win32ApiProvider = win32ApiProvider;
-            Initialize();
         }
 
         /// <summary>
@@ -128,7 +144,6 @@ namespace CheckWindowsVersion
             _ = environmentProvider ?? throw new ArgumentNullException();
 
             _environmentProvider = environmentProvider;
-            Initialize();
         }
 
         /// <summary>
@@ -137,7 +152,6 @@ namespace CheckWindowsVersion
         public static void SetWin32ApiProviderDefault()
         {
             _win32ApiProvider = _win32ApiProviderDefault;
-            Initialize();
         }
 
         /// <summary>
@@ -146,7 +160,6 @@ namespace CheckWindowsVersion
         public static void SetEnvironmentProviderDefault()
         {
             _environmentProvider = _environmentProviderDefault;
-            Initialize();
         }
 
         /// <summary>
@@ -156,7 +169,6 @@ namespace CheckWindowsVersion
         /// <exception cref="InvalidOperationException">Cannot be called on systems other than Windows 10</exception>
         public static MajorVersion10Properties MajorVersion10Properties()
         {
-            // TODO: check, if will work on Server 2019 and 2016
             if (MajorVersion < 10)
                 throw new InvalidOperationException("Cannot be called on systems earlier than version 10.");
 
@@ -165,40 +177,29 @@ namespace CheckWindowsVersion
             return majorVersion10Properties;
         }
 
-        /// <summary>
-        /// Gets the initial OS version information
-        /// </summary>
-        private static void Initialize()
-        {
-            DetectWindowsVersion(_win32ApiProvider);
-        }
-
-        private static void DetectWindowsVersion(IWin32API win32ApiProvider)
+        private static OSVERSIONINFOEX DetectWindowsVersion(IWin32API win32ApiProvider)
         {
             var osVersionInfo = new OSVERSIONINFOEX { OSVersionInfoSize = Marshal.SizeOf(typeof(OSVERSIONINFOEX)) };
 
             if (win32ApiProvider.RtlGetVersion(ref osVersionInfo) != NTSTATUS.STATUS_SUCCESS)
-            {
-                // TODO: Error handling, call GetVersionEx, etc.
-            }
+                throw new InvalidOperationException($"Failed to call internal {nameof(win32ApiProvider.RtlGetVersion)}.");
 
-            MajorVersion = osVersionInfo.MajorVersion;
-            MinorVersion = osVersionInfo.MinorVersion;
-            BuildNumber = osVersionInfo.BuildNumber;
-
-            _productType = osVersionInfo.ProductType;
-            _suiteMask = osVersionInfo.SuiteMask;
+            return osVersionInfo;
         }
 
         private static bool GetIfServer()
         {
-            return _productType == ProductType.DomainController
-                   || _productType == ProductType.Server;
+            ProductType productType = DetectWindowsVersion(_win32ApiProvider).ProductType;
+
+            return productType == ProductType.DomainController
+                   || productType == ProductType.Server;
         }
 
         private static bool GetIfWorkStation()
         {
-            return _productType == ProductType.Workstation;
+            ProductType productType = DetectWindowsVersion(_win32ApiProvider).ProductType;
+
+            return productType == ProductType.Workstation;
         }
 
         private static bool GetIf64BitOperatingSystem()
@@ -229,7 +230,7 @@ namespace CheckWindowsVersion
         WindowsXPProx64,
         WindowsHomeServer,
         WindowsServer2003,
-        WindowsServer2003R2,    // tested
+        WindowsServer2003R2,
         WindowsVista,
         WindowsServer2008,
         WindowsServer2008R2,
@@ -237,8 +238,11 @@ namespace CheckWindowsVersion
         WindowsServer2012,
         Windows8,
         Windows81,
-        WindowsServer2012R2,    // tested
-        WindowsServer20162019,  // tested Server 2019
-        Windows10               // tested
+        WindowsServer2012R2,
+        WindowsServer2016,
+        WindowsServer2019,
+        Windows10,
+        Windows11,
+        WindowsServer2022
     }
 }

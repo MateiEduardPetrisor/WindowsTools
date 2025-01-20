@@ -8,7 +8,11 @@
             //and this article https://www.prugg.at/2019/09/09/properly-detect-windows-version-in-c-net-even-windows-10/
 
             OperatingSystem osVer = OSVersion.GetOperatingSystem();
-            if (osVer.Equals(OperatingSystem.Windows10) || osVer.Equals(OperatingSystem.WindowsServer20162019))
+            if (osVer.Equals(OperatingSystem.Windows11) || osVer.Equals(OperatingSystem.WindowsServer2022))
+            {
+                return 11;
+            }
+            else if (osVer.Equals(OperatingSystem.Windows10) || osVer.Equals(OperatingSystem.WindowsServer2016) || osVer.Equals(OperatingSystem.WindowsServer2019))
             {
                 return 10; //Windows 10
             }

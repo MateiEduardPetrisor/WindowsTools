@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>CheckWindowsVersion</RootNamespace>
     <AssemblyName>CheckWindowsVersion</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
     <TargetFrameworkProfile />
@@ -40,7 +40,7 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>202DED2AAC9F503DA2837D64C270A49B67F17FD6</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>9B7B69E1839644ECCE18BF46251A9BCE423B36C4</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -70,7 +70,9 @@
     <Compile Include="MajorVersion10\MajorVersion10Properties.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="app.manifest" />
+    <None Include="SelfSignedCertificate.pfx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
