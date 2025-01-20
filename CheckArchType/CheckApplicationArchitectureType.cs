@@ -24,8 +24,8 @@ namespace CheckArchType
         {
             this.X64_7Z = CombinePath(Environment.GetEnvironmentVariable("SYSTEMROOT"), new String[] { new FileInfo(Assembly.GetExecutingAssembly().Location).DirectoryName, "7z", "x64", "7z.exe" });
             this.X86_7Z = CombinePath(Environment.GetEnvironmentVariable("SYSTEMROOT"), new String[] { new FileInfo(Assembly.GetExecutingAssembly().Location).DirectoryName, "7z", "x86", "7z.exe" });
-            Console.WriteLine("7z x64 Path Is {0}", this.X64_7Z);
-            Console.WriteLine("7z x86 Path Is {0}.", this.X86_7Z);
+            Console.WriteLine("7z.exe x64 Path Is {0}", this.X64_7Z);
+            Console.WriteLine("7z.exe x86 Path Is {0}.", this.X86_7Z);
         }
 
         public void CheckAchitectureType(String EXE_PATH)
@@ -73,7 +73,7 @@ namespace CheckArchType
 
         private String Check(String PATH_7Z, String EXE_PATH)
         {
-            Console.WriteLine("Using 7z From {0}", PATH_7Z);
+            Console.WriteLine("Using 7za.exe From {0}", PATH_7Z);
             Process p = new Process();
             p.StartInfo.FileName = PATH_7Z;
             p.StartInfo.Arguments = "l " + "\"" + EXE_PATH + "\"" + " |findstr CPU";
