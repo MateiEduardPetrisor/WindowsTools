@@ -1,0 +1,3 @@
+$SlfSignedCert = New-SelfSignedCertificate -DnsName "FQDN_HERE" -Type CodeSigningCert -CertStoreLocation Cert:\CurrentUser\My -KeySpec Signature -NotAfter (Get-Date).AddYears(25)
+$SlfSignedCertPassword = ConvertTo-SecureString -String "PASSWORD_HERE" -Force –AsPlainText
+Export-PfxCertificate -Cert "cert:\CurrentUser\My\$($SlfSignedCert.Thumbprint)" -FilePath ".\SelfSignedCertificate.pfx" -Password $SlfSignedCertPassword
