@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
@@ -65,7 +66,8 @@ namespace DismUpdateInstaller
             FileInfo FileInfoObj = new FileInfo(WorkingDirectoryFullPath);
             if (!FileInfoObj.Exists && FileInfoObj.Attributes.HasFlag(FileAttributes.Directory))
             {
-                String[] FileList = Directory.GetFiles(WorkingDirectoryFullPath, "*.msu", SearchOption.TopDirectoryOnly);
+                List<String> FileList = new List<String>(Directory.GetFiles(WorkingDirectoryFullPath, "*.msu", SearchOption.TopDirectoryOnly));
+                FileList.Sort();
                 Process p = new Process();
                 p.StartInfo.FileName = "CheckWindowsVersion.exe";
                 p.Start();
@@ -85,8 +87,8 @@ namespace DismUpdateInstaller
                     foreach (String fname in FileList)
                     {
                         this.ExtractMsuFile(fname);
-                        FileList = Directory.GetFiles(WorkingDirectoryFullPath, "*.cab", SearchOption.TopDirectoryOnly);
-                        foreach (String CabFilePath in FileList)
+                        List<String> CabFileList = new List<String>(Directory.GetFiles(WorkingDirectoryFullPath, "*.cab", SearchOption.TopDirectoryOnly));
+                        foreach (String CabFilePath in CabFileList)
                         {
                             if (!CabFilePath.ToLower().Contains("wsusscan.cab"))
                             {
