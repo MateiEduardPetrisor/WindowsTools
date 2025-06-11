@@ -1,4 +1,5 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -48,13 +49,11 @@ namespace WusaUpdateInstaller
             FileInfo FileInfoObj = new FileInfo(WorkingDirectoryFullPath);
             if (!FileInfoObj.Exists && FileInfoObj.Attributes.HasFlag(FileAttributes.Directory))
             {
-                String[] FileList = Directory.GetFiles(WorkingDirectoryFullPath, "*.msu", SearchOption.TopDirectoryOnly);
+                List<String> FileList = new List<String>(Directory.GetFiles(WorkingDirectoryFullPath, "*.msu", SearchOption.TopDirectoryOnly));
+                FileList.Sort();
                 foreach (String MsuFile in FileList)
                 {
-                    if (MsuFile.ToLower().Contains("windows"))
-                    {
-                        this.InstallSingleUpdate(MsuFile);
-                    }
+                    this.InstallSingleUpdate(MsuFile);
                 }
             }
         }
